@@ -4,4 +4,5 @@ export interface ITodo {
     description: string;
     expiredDate: string;
     isCompleted: boolean;
+    isRemoved: false;
 }

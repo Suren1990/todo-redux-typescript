@@ -1,0 +1,32 @@
+.todoedit {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    &__input {
+        height: 3.5rem;
+        margin-block-start: 1rem;
+        padding: 0 .75rem;
+        font-size: 1.125rem;
+        color: #333;
+        border: 1px solid #BDBDBD;
+        border-radius: .75rem;
+    }
+
+    &__textarea {
+        height: 7.5rem;
+        margin-block-start: 1rem;
+        padding: 0.75rem;
+        font-size: 1.125rem;
+        color: #333;
+        border: 1px solid #BDBDBD;
+        resize: none;
+        border-radius: .75rem;
+    }
+
+    &__save {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+    }
+}

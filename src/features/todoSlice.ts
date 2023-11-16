@@ -20,6 +20,7 @@ const todoSlice = createSlice({
                 description: action.payload.description,
                 expiredDate: action.payload.expiredDate,
                 isCompleted: false,
+                isRemoved: false,
             })
         },
         completeTodoAction(state, action: PayloadAction<ITodo>) {

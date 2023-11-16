@@ -1,6 +1,7 @@
-import { useAppDispatch } from "../../app/hooks";
+import { useState } from "react";
 import { ITodo } from "../../models/ITodo";
-import { completeTodoAction, deleteTodoAction } from "../../features/todoSlice";
+import TodoEdit from "./TodoEdit/TodoEdit";
+import TodoItemInner from "./TodoItemInner/TodoItemInner";
 
 import styles from "./TodoItem.module.scss";
 
@@ -9,49 +10,27 @@ interface TodoItemProps {
   activeTab: string;
 }
 
-const TodoItem: React.FC<TodoItemProps> = ({
-  todo,
-  activeTab
-}) => {
-  const dispatch = useAppDispatch();
+const TodoItem: React.FC<TodoItemProps> = ({ todo, activeTab }) => {
+  const [isEdit, setIsEdit] = useState<boolean>(false);
 
-  const onChange = () => {
-    dispatch(completeTodoAction(todo));
+  const editHandle = () => {
+    setIsEdit((prev) => !prev);
   };
-
-  const deleteTodo = (id: string) => {
-    dispatch(deleteTodoAction(id));
-  }
 
   return (
     <div className={styles.todoitem}>
-      <div className={styles.todoitem__top}>
-        <input
-          className={styles.todoitem__checkbox}
-          type="checkbox"
-          checked={todo.isCompleted}
-          onChange={onChange}
-        />
-        <h4
-          className={`${styles.todoitem__title} ${
-            todo.isCompleted ? styles.todoitem__title_completed : ""
-          }`}
-        >
-          {todo.title}
-        </h4>
-      </div>
-      <p className={styles.todoitem__description}>{todo.description}</p>
-      <p className={styles.todoitem__expireddate}>
-        <span>Expired: </span> 
-        {todo.expiredDate}
-      </p>
-      {activeTab === "completed" && (
+      {!isEdit && (
         <button
-          className={styles.todoitem__delete}
-          onClick={() => deleteTodo(todo.id)}
+          className={`btn ${styles.todoitem__edit}`}
+          onClick={editHandle}
         >
-          &#128465;
+          Edit
         </button>
+      )}
+      {isEdit ? (
+        <TodoEdit todo={todo} setIsEdit={setIsEdit} />
+      ) : (
+        <TodoItemInner todo={todo} activeTab={activeTab} />
       )}
     </div>
   );

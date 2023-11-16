@@ -6,7 +6,7 @@ import Tabs from "./components/Tabs/Tabs";
 import "./App.css";
 
 function App() {
-  const tabList = ["Pending", "Completed", "Overdue", "Removed", 'Trash'];
+  const tabList = ["Pending", "Completed", "Overdue", "Removed / Trash"];
 
   const [activeTab, setActiveTab] = useState("Pending");
 
