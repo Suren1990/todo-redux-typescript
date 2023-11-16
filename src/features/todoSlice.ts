@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ITodo } from "../models/ITodo";
+import { EditTodo, ITodo } from "../models/ITodo";
 
 interface TodosState {
     todos: ITodo[];
@@ -21,6 +21,7 @@ const todoSlice = createSlice({
                 expiredDate: action.payload.expiredDate,
                 isCompleted: false,
                 isRemoved: false,
+                isOverdue: false,
             })
         },
         completeTodoAction(state, action: PayloadAction<ITodo>) {
@@ -29,15 +30,35 @@ const todoSlice = createSlice({
                 completedTodo.isCompleted = !completedTodo.isCompleted;
             }
         },
-        deleteTodoAction(state, action: PayloadAction<string>) {
+        editTodoAction(state, action: PayloadAction<EditTodo>) {
+            const editedTodo = state.todos.find((todo) => todo.id === action.payload.id);
+            if (editedTodo) {
+                editedTodo.title = action.payload.title;
+                editedTodo.description = action.payload.description;
+                editedTodo.expiredDate = action.payload.expiredDate;
+            }
+        },
+        movoTodosToTrashAction(state, action: PayloadAction<ITodo["id"]>) {
+            const movedTodoToTrash = state.todos.find((todo) => todo.id === action.payload);
+            if (movedTodoToTrash) {
+                movedTodoToTrash.isRemoved = true;
+            }
+        },
+        overdueTodoAction(state, action: PayloadAction<ITodo["id"]>) {
+            const todoOverdue = state.todos.find((todo) => todo.id === action.payload);
+            if (todoOverdue) {
+                todoOverdue.isOverdue = true;
+            }
+        },
+        deleteTodoAction(state, action: PayloadAction<ITodo["id"]>) {
             state.todos = state.todos.filter((todo) => todo.id !== action.payload);
         },
         deleteAllCompletedAction(state) {
-            state.todos = state.todos.filter((todo) => !todo.isCompleted)
+            state.todos = state.todos.filter((todo) => !todo.isRemoved)
         },
     }
 })
 
-export const { addTodoAction, completeTodoAction, deleteTodoAction, deleteAllCompletedAction } = todoSlice.actions;
+export const { addTodoAction, completeTodoAction, editTodoAction, deleteTodoAction, movoTodosToTrashAction, overdueTodoAction, deleteAllCompletedAction } = todoSlice.actions;
 
 export default todoSlice.reducer;

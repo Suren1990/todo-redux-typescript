@@ -3,18 +3,34 @@
     flex-direction: column;
     align-items: flex-start;
 
+    &__title {
+        max-width: calc(100% - 7.5rem);
+        margin-block-end: 1rem;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #333;
+    }
+
     &__input {
-        height: 3.5rem;
-        margin-block-start: 1rem;
+        width: 100%;
+        height: 2.8rem;
+        margin-block-start: 0.5rem;
         padding: 0 .75rem;
         font-size: 1.125rem;
         color: #333;
         border: 1px solid #BDBDBD;
         border-radius: .75rem;
+        outline: 0;
+
+        &_error {
+            border-width: 2px;
+            border-color: #EB5757;
+        }
     }
 
     &__textarea {
-        height: 7.5rem;
+        width: 100%;
+        height: 5.5rem;
         margin-block-start: 1rem;
         padding: 0.75rem;
         font-size: 1.125rem;
@@ -22,11 +38,22 @@
         border: 1px solid #BDBDBD;
         resize: none;
         border-radius: .75rem;
+        outline: 0;
+
+        &_error {
+            border-width: 2px;
+            border-color: #EB5757;
+        }
     }
 
     &__save {
         position: absolute;
         top: 1rem;
         right: 1rem;
+    }
+
+    &__error {
+        margin-block-start: 0.5rem;
+        color: #EB5757;
     }
 }

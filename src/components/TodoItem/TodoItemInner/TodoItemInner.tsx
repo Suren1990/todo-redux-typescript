@@ -1,5 +1,9 @@
 import { useAppDispatch } from "../../../app/hooks";
-import { completeTodoAction, deleteTodoAction } from "../../../features/todoSlice";
+import {
+  completeTodoAction,
+  deleteTodoAction,
+  movoTodosToTrashAction,
+} from "../../../features/todoSlice";
 import { ITodo } from "../../../models/ITodo";
 
 import styles from "./TodoItemInner.module.scss";
@@ -14,6 +18,10 @@ const TodoItemInner: React.FC<TodoItemInnerProps> = ({ todo, activeTab }) => {
 
   const onChange = () => {
     dispatch(completeTodoAction(todo));
+  };
+
+  const movoTodosToTrash = (id: string) => {
+    dispatch(movoTodosToTrashAction(id));
   };
 
   const deleteTodo = (id: string) => {
@@ -44,12 +52,22 @@ const TodoItemInner: React.FC<TodoItemInnerProps> = ({ todo, activeTab }) => {
         <span>Expired: </span>
         {todo.expiredDate}
       </p>
-      <button
-        className={styles.todoiteminner__delete}
-        onClick={() => deleteTodo(todo.id)}
-      >
-        &#128465;
-      </button>
+      {todo.isRemoved ? (
+        <button
+          className={styles.todoiteminner__delete}
+          onClick={() => deleteTodo(todo.id)}
+        >
+          <span>Delete</span> &#128465;
+        </button>
+      ) : (
+        <button
+          className={styles.todoiteminner__delete}
+          onClick={() => movoTodosToTrash(todo.id)}
+        >
+          <span>Move to trash</span>
+          &#128465;
+        </button>
+      )}
     </div>
   );
 };

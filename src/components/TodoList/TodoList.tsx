@@ -13,17 +13,25 @@ const TodoList: React.FC<TodoListProps> = ({ activeTab }) => {
   const todos = useAppSelector((state) => state.todos.todos);
   let todosByTab = todos;
 
-  if (activeTab === "Removed") {
-    todosByTab = todos.filter((todo) => !todo.isCompleted);
+  if (activeTab === "Trash") {
+    todosByTab = todos.filter((todo) => todo.isRemoved);
   }
 
   if (activeTab === "Completed") {
-    todosByTab = todos.filter((todo) => todo.isCompleted);
+    todosByTab = todos.filter((todo) => todo.isCompleted && !todo.isOverdue && !todo.isRemoved);
+  }
+
+  if (activeTab === "Pending") {
+    todosByTab = todos.filter((todo) => !todo.isCompleted && !todo.isRemoved && !todo.isOverdue);
+  }
+
+  if (activeTab === "Overdue") {
+    todosByTab = todos.filter((todo) => todo.isOverdue && !todo.isRemoved);
   }
 
   const deleteAllCompleted = () => {
     dispatch(deleteAllCompletedAction());
-  }
+  };
 
   return (
     <div className={styles.todolist}>
@@ -31,14 +39,10 @@ const TodoList: React.FC<TodoListProps> = ({ activeTab }) => {
         <>
           <div className={styles.todolist__content}>
             {todosByTab.map((todo) => (
-              <TodoItem
-                todo={todo}
-                activeTab={activeTab}
-                key={todo.id}
-              />
+              <TodoItem todo={todo} activeTab={activeTab} key={todo.id} />
             ))}
           </div>
-          {activeTab === "Completed" && (
+          {activeTab === "Trash" && (
             <button
               className={styles.todolist__btn_delete}
               onClick={deleteAllCompleted}

@@ -1,7 +1,10 @@
-import { ChangeEvent, useRef } from "react";
+import cn from "classnames";
+//import { useState } from "react";
 import { useAppDispatch } from "../../../app/hooks";
-import { ITodo } from "../../../models/ITodo";
-import { addTodoAction } from "../../../features/todoSlice";
+import { Formik, Form, Field } from "formik";
+import { EditTodo, FormProps, ITodo } from "../../../models/ITodo";
+import { editTodoAction } from "../../../features/todoSlice";
+import { addTodoSchema } from "../../../schemas";
 
 import styles from "./TodoEdit.module.scss";
 
@@ -13,39 +16,38 @@ interface TodoEditProps {
 const TodoEdit: React.FC<TodoEditProps> = ({ todo, setIsEdit }) => {
   const dispatch = useAppDispatch();
 
-  const inputRef = useRef<HTMLInputElement>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const expiredDateRef = useRef<HTMLInputElement>(null);
+  const initialValues: FormProps = {
+    title: todo.title,
+    description: todo.description,
+    expiredDate: todo.expiredDate,
+  };
+
+  // const [title, setTitle] = useState<string>(todo.title);
+  // const [description, setDescription] = useState<string>(todo.description);
+  // const [expiredDate, setExpiredDate] = useState<string>(todo.expiredDate);
 
   const editTodo = (
     title: string,
     description: string,
     expiredDate: string
   ) => {
-    const newTodo: ITodo = {
-      id: String(Math.random()),
+    const editedTodo: EditTodo = {
+      id: todo.id,
       title,
       description,
       expiredDate,
-      isCompleted: false,
-      isRemoved: false,
     };
-    dispatch(addTodoAction(newTodo));
+    dispatch(editTodoAction(editedTodo));
   };
 
-  const onSubmit = (e: ChangeEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const saveEditedTodoData = (values: FormProps) => {
+    console.log("aaaaaaaaaaaaaa");
+    
 
-    const title = inputRef.current?.value;
-    const description = textareaRef.current?.value;
-    const expiredDate = expiredDateRef.current?.value;
+    let { title, description, expiredDate } = values;
 
     if (title && description && expiredDate) {
       editTodo(title, description, expiredDate);
-      inputRef.current.value = "";
-      textareaRef.current.value = "";
-      expiredDateRef.current.value = "";
-
       setIsEdit(false);
     }
 
@@ -53,17 +55,47 @@ const TodoEdit: React.FC<TodoEditProps> = ({ todo, setIsEdit }) => {
   };
 
   return (
-    <form className={styles.todoedit} onSubmit={onSubmit}>
-      <input type="text" className={styles.addtodo__input} value={todo.title} ref={inputRef} />
-      <textarea className={styles.addtodo__textarea} value={todo.description} ref={textareaRef} />
-      <input
-        type="date"
-        className={styles.addtodo__input}
-        value={todo.expiredDate}
-        ref={expiredDateRef}
-      />
-      <button className={`btn ${styles.todoedit__save}`}>Save</button>
-    </form>
+    <Formik
+      initialValues={initialValues}
+      validationSchema={addTodoSchema}
+      onSubmit={(values) => {
+        saveEditedTodoData(values);
+      }}
+    >
+      {({ errors, touched }) => (
+        <Form className={styles.todoedit}>
+          <h4 className={styles.todoedit__title}>Edit Todo</h4>
+          <Field
+            className={cn(styles.todoedit__input, {
+              [styles.todoedit__input_error]: errors.title && touched.title,
+            })}
+            name="title"
+          />
+          {errors.title && touched.title && <p className={styles.todoedit__error}>{errors.title}</p>}
+          <Field
+            as="textarea"
+            className={cn(styles.todoedit__textarea, {
+              [styles.todoedit__textarea_error]:
+                errors.description && touched.description,
+            })}
+            name="description"
+          />
+          {errors.title && touched.title && <p className={styles.todoedit__error}>{errors.title}</p>}
+          <Field
+            type="date"
+            className={cn(styles.todoedit__input, {
+              [styles.todoedit__input_error]:
+                errors.expiredDate && touched.expiredDate,
+            })}
+            name="expiredDate"
+          />
+          {errors.expiredDate && touched.expiredDate && (
+            <p className={styles.todoedit__error}>{errors.expiredDate}</p>
+          )}
+          <button type="submit" className={`btn ${styles.todoedit__save}`}>Save</button>
+        </Form>
+      )}
+    </Formik>
   );
 };
 

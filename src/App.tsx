@@ -1,14 +1,30 @@
 import { useState } from "react";
+import { useAppDispatch, useAppSelector } from "./app/hooks";
 import AddTodo from "./components/AddTodo/AddTodo";
 import TodoList from "./components/TodoList/TodoList";
 import Tabs from "./components/Tabs/Tabs";
+import useInterval from "use-interval";
 
 import "./App.css";
+import { overdueTodoAction } from "./features/todoSlice";
 
 function App() {
-  const tabList = ["Pending", "Completed", "Overdue", "Removed / Trash"];
+  const todos = useAppSelector((state) => state.todos.todos);
+  const dispatch = useAppDispatch();
+
+  const tabList = ["Pending", "Completed", "Overdue", "Trash"];
 
   const [activeTab, setActiveTab] = useState("Pending");
+
+  useInterval(() => {
+    const currentTime = Date.now();
+
+    todos.forEach((todo) => {
+      if (currentTime >= new Date(todo.expiredDate).getTime()) {
+        dispatch(overdueTodoAction(todo.id));
+      }
+    });
+  }, 5_000);
 
   return (
     <div className="todo">
@@ -19,9 +35,7 @@ function App() {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
       />
-      <TodoList
-        activeTab={activeTab}
-      />
+      <TodoList activeTab={activeTab} />
     </div>
   );
 }

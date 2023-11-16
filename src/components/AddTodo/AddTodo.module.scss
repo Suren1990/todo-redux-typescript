@@ -9,6 +9,10 @@
         font-weight: 700;
         color: #333;
 
+        &_error {
+            color: #EB5757;
+        }
+
         & + & {
             margin-block-start: 1.25rem;
         }
@@ -22,6 +26,12 @@
         color: #333;
         border: 1px solid #BDBDBD;
         border-radius: .75rem;
+        outline: 0;
+
+        &_error {
+            border-width: 2px;
+            border-color: #EB5757;
+        }
     }
 
     &__textarea {
@@ -33,6 +43,12 @@
         border: 1px solid #BDBDBD;
         resize: none;
         border-radius: .75rem;
+        outline: 0;
+
+        &_error {
+            border-width: 2px;
+            border-color: #EB5757;
+        }
     }
 
     &__btn_add {

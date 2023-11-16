@@ -4,5 +4,19 @@ export interface ITodo {
     description: string;
     expiredDate: string;
     isCompleted: boolean;
-    isRemoved: false;
+    isRemoved: boolean;
+    isOverdue: boolean;
+}
+
+export interface EditTodo {
+    id: string;
+    title: string;
+    description: string;
+    expiredDate: string;
+}
+
+export interface FormProps {
+    title: string;
+    description: string;
+    expiredDate: string;
 }

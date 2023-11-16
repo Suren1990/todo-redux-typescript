@@ -1,16 +1,20 @@
-import { useRef, ChangeEvent } from "react";
+import cn from "classnames";
 import { useAppDispatch } from "../../app/hooks";
+import { Formik, Form, Field } from "formik";
 import { addTodoAction } from "../../features/todoSlice";
-import { ITodo } from "../../models/ITodo";
+import { FormProps, ITodo } from "../../models/ITodo";
+import { addTodoSchema } from "../../schemas";
 
 import styles from "./AddTodo.module.scss";
 
 const AddTodo: React.FC = () => {
   const dispatch = useAppDispatch();
 
-  const inputRef = useRef<HTMLInputElement>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const expiredDateRef = useRef<HTMLInputElement>(null);
+  const initialValues: FormProps = {
+    title: "",
+    description: "",
+    expiredDate: "",
+  };
 
   const addTodo = (title: string, description: string, expiredDate: string) => {
     const newTodo: ITodo = {
@@ -20,47 +24,83 @@ const AddTodo: React.FC = () => {
       expiredDate,
       isCompleted: false,
       isRemoved: false,
+      isOverdue: false,
     };
     dispatch(addTodoAction(newTodo));
   };
 
-  const onSubmit = (e: ChangeEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const title = inputRef.current?.value;
-    const description = textareaRef.current?.value;
-    const expiredDate = expiredDateRef.current?.value;
+  const saveTodoData = (values: FormProps) => {
+    let { title, description, expiredDate } = values;
 
     if (title && description && expiredDate) {
       addTodo(title, description, expiredDate);
-      inputRef.current.value = "";
-      textareaRef.current.value = "";
-      expiredDateRef.current.value = "";
     }
 
     return;
   };
 
   return (
-    <form className={styles.addtodo} onSubmit={onSubmit}>
-      <label className={styles.addtodo__label}>
-        Add Title*
-        <input type="text" className={styles.addtodo__input} ref={inputRef} />
-      </label>
-      <label className={styles.addtodo__label}>
-        Add Description*
-        <textarea className={styles.addtodo__textarea} ref={textareaRef} />
-      </label>
-      <label className={styles.addtodo__label}>
-        Add Expired Date*
-      <input
-        type="date"
-        className={styles.addtodo__input}
-        ref={expiredDateRef}
-      />
-        </label>
-      <button className={styles.addtodo__btn_add}>Add Todo</button>
-    </form>
+    <Formik
+      initialValues={initialValues}
+      validationSchema={addTodoSchema}
+      onSubmit={(values, { resetForm }) => {
+        saveTodoData(values);
+        resetForm();
+      }}
+    >
+      {({ errors, touched }) => (
+        <Form className={styles.addtodo}>
+          <label
+            className={cn(styles.addtodo__label, {
+              [styles.addtodo__label_error]: errors.title && touched.title,
+            })}
+          >
+            Add Title* {errors.title && touched.title && errors.title}
+            <Field
+              className={cn(styles.addtodo__input, {
+                [styles.addtodo__input_error]: errors.title && touched.title,
+              })}
+              name="title"
+            />
+          </label>
+          <label
+            className={cn(styles.addtodo__label, {
+              [styles.addtodo__label_error]:
+                errors.description && touched.description,
+            })}
+          >
+            Add Description* {errors.description && touched.description && errors.description}
+            <Field
+              as="textarea"
+              className={cn(styles.addtodo__textarea, {
+                [styles.addtodo__textarea_error]:
+                  errors.description && touched.description,
+              })}
+              name="description"
+            />
+          </label>
+          <label
+            className={cn(styles.addtodo__label, {
+              [styles.addtodo__label_error]:
+                errors.expiredDate && touched.expiredDate,
+            })}
+          >
+            Add Expired Date* {errors.expiredDate && touched.expiredDate && errors.expiredDate}
+            <Field
+              type="date"
+              className={cn(styles.addtodo__input, {
+                [styles.addtodo__input_error]:
+                  errors.expiredDate && touched.expiredDate,
+              })}
+              name="expiredDate"
+            />
+          </label>
+          <button type="submit" className={styles.addtodo__btn_add}>
+            Add Todo
+          </button>
+        </Form>
+      )}
+    </Formik>
   );
 };
 

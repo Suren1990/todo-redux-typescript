@@ -40,10 +40,18 @@
     }
 
     &__delete {
+        display: flex;
+        align-items: center;
         margin-inline-start: auto;
-        font-size: 1.5rem;
+        font-size: 1.25rem;
         color: #686767;
         background-color: transparent;
+
+        span {
+            margin-inline-end: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+        }
 
         &:hover {
             color: #EB5757;
